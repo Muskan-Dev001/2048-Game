@@ -407,7 +407,7 @@ function control(e) {
 
 function handleSwipe() {
   let diffX = endX - startX;
-  let diffY = endY - endX;
+  let diffY = endY - startY;
   let minThreshold = 30;
 
   if(Math.abs(diffX) < minThreshold && Math.abs(diffY) < minThreshold) return;
@@ -433,13 +433,14 @@ function handleSwipe() {
 gridDisplay.addEventListener("touchstart", (e) => {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
-})
+});
 
-gridDisplay.addEventListener("touchend",(e) => {
-  endX = e.touches[0].clientX;
-  endY = e.touches[0].clientY;
+gridDisplay.addEventListener("touchend", (e) => {
+  endX = e.changedTouches[0].clientX;
+  endY = e.changedTouches[0].clientY;
   handleSwipe();
-})
+});
+
 
 // reset Game function
 function resetGame() {
