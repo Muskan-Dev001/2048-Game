@@ -431,15 +431,22 @@ function handleSwipe() {
 // userTouchScreen Action
 
 gridDisplay.addEventListener("touchstart", (e) => {
+  e.preventDefault();
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
-});
+}, { passive: false });
+
+gridDisplay.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+}, { passive: false });
 
 gridDisplay.addEventListener("touchend", (e) => {
+  e.preventDefault();
   endX = e.changedTouches[0].clientX;
   endY = e.changedTouches[0].clientY;
   handleSwipe();
-});
+}, { passive: false });
+
 
 
 // reset Game function
@@ -463,3 +470,4 @@ function resetGame() {
 
 resetGameBtn.addEventListener("click", resetGame);
 document.addEventListener("keyup", control);
+
