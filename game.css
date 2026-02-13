@@ -141,6 +141,9 @@ h1 {
   font-size: 1.06rem;
   cursor: pointer;
 }
+.resetGame:hover{
+  background-color: rgb(220, 40, 76,0.79);
+}
 
 @media (max-width:500px) {
   
@@ -148,5 +151,6 @@ h1 {
     line-height: normal;
   }
 }
+
 
 
