@@ -8,6 +8,34 @@ let startY = 0;
 let endX = 0;
 let endY = 0;
 
+// save on local storage
+function saveGameState() {
+  const gameState = divArray.map((div) => div.innerText);
+  localStorage.setItem("gameState", JSON.stringify(gameState));
+  localStorage.setItem("score", score);
+}
+
+// get from local storage
+
+function getSavedGameState() {
+  const savedGame = JSON.parse(localStorage.getItem("gameState"));
+  console.log(savedGame);
+  const savedScore = parseInt(localStorage.getItem("score"));
+
+  if (savedGame) {
+    savedGame.forEach((val, index) => {
+      divArray[index].innerText = val;
+    });
+  }
+
+  if (!isNaN(savedScore)) {
+    score = savedScore;
+    scoreDisplay.innerText = savedScore;
+  }
+
+  bgColor();
+}
+
 // create game board
 function createBoard() {
   for (let i = 0; i < 16; i++) {
@@ -17,38 +45,42 @@ function createBoard() {
     gridDisplay.appendChild(div);
     divArray.push(div);
   }
-  generate();
-  generate();
+
+  let savedGame = JSON.parse(localStorage.getItem("gameState"));
+
+  if (savedGame && savedGame.length === divArray.length) {
+    getSavedGameState();
+  } else {
+    generate();
+    generate();
+  }
 }
 
 createBoard();
 
-
 // generate new number
 function generate() {
-  let emptytiles = divArray.filter((div) => parseInt(div.innerText) === 0);
+  let emptytiles = divArray.filter(div => parseInt(div.innerText) === 0);
 
   if (emptytiles.length === 0) return;
 
-  let randomNum = Math.floor(Math.random() * divArray.length);
-  if (divArray[randomNum].innerText == 0) {
-    divArray[randomNum].innerText = "2";
-  } else generate();
+  let randomTile = emptytiles[Math.floor(Math.random() * emptytiles.length)];
+  randomTile.innerText = "2";
+
   bgColor();
 }
+
 
 /* --------- ANIMATION------- */
 
 function animateMerge(tile) {
   tile.classList.add("merge");
-  tile.addEventListener(
-    "animationend",
-    () => tile.classList.remove("merge"),
-    { once: true }
-  );
+  tile.addEventListener("animationend", () => tile.classList.remove("merge"), {
+    once: true,
+  });
 }
 
-/*---------------Move Logic -------------*/ 
+/*---------------Move Logic -------------*/
 
 // move right
 function moveRight() {
@@ -105,7 +137,6 @@ function moveLeft() {
     }
   }
 }
-
 
 // Move Up
 function moveUP() {
@@ -188,7 +219,7 @@ function combineRowRight() {
 
 // Combine Row to Right
 function combineRowLeft() {
-    for (let i = 0; i < 16; i += 4) {
+  for (let i = 0; i < 16; i += 4) {
     for (let j = i; j < i + 3; j++) {
       let current = parseInt(divArray[j].innerText);
       let left = parseInt(divArray[j + 1].innerText);
@@ -208,7 +239,6 @@ function combineRowLeft() {
     }
   }
 }
-
 
 // Combine column upward
 function combineColumnUp() {
@@ -232,7 +262,6 @@ function combineColumnUp() {
   }
 }
 
-
 // Combine column Downward
 function combineColumnDown() {
   for (let col = 0; col < 4; col++) {
@@ -254,8 +283,6 @@ function combineColumnDown() {
     }
   }
 }
-
-
 
 function bgColor() {
   for (let i = 0; i < divArray.length; i++) {
@@ -315,22 +342,18 @@ function checkForWin() {
 
 // check for loser
 function checkForLoser() {
-
-   let loseGame = true;
+  let loseGame = true;
 
   // Check for empty cells
   for (let i = 0; i < divArray.length; i++) {
     if (parseInt(divArray[i].innerText) === 0) {
-      return; 
+      return;
     }
   }
 
   // Check for possible horizontal merges
   for (let i = 0; i < divArray.length; i++) {
-    if (
-      i % 4 !== 3 && 
-      divArray[i].innerText === divArray[i + 1].innerText
-    ) {
+    if (i % 4 !== 3 && divArray[i].innerText === divArray[i + 1].innerText) {
       return;
     }
   }
@@ -341,18 +364,16 @@ function checkForLoser() {
       return;
     }
   }
- 
 
   // If none of the above returned, player loses
-  if(loseGame){
-let result = document.createElement("div");
-  result.innerText = "You LOSE!";
-  result.classList.add("game-over");
-  document.body.appendChild(result);
-  document.removeEventListener("keyup", control);
-  loseGame = false;
+  if (loseGame) {
+    let result = document.createElement("div");
+    result.innerText = "You LOSE!";
+    result.classList.add("game-over");
+    document.body.appendChild(result);
+    document.removeEventListener("keyup", control);
+    loseGame = false;
   }
-  
 }
 
 function keyUp() {
@@ -362,6 +383,7 @@ function keyUp() {
   checkForWin();
   generate();
   checkForLoser();
+  saveGameState();
 }
 
 function keyDown() {
@@ -371,6 +393,7 @@ function keyDown() {
   checkForWin();
   generate();
   checkForLoser();
+  saveGameState();
 }
 
 function keyRight() {
@@ -380,6 +403,7 @@ function keyRight() {
   checkForWin();
   generate();
   checkForLoser();
+  saveGameState();
 }
 
 function keyLeft() {
@@ -389,6 +413,7 @@ function keyLeft() {
   checkForWin();
   generate();
   checkForLoser();
+  saveGameState();
 }
 
 function control(e) {
@@ -410,19 +435,19 @@ function handleSwipe() {
   let diffY = endY - startY;
   let minThreshold = 30;
 
-  if(Math.abs(diffX) < minThreshold && Math.abs(diffY) < minThreshold) return;
+  if (Math.abs(diffX) < minThreshold && Math.abs(diffY) < minThreshold) return;
 
   //check for horizontal swipe
-  if(Math.abs(diffX) > Math.abs(diffY)){
-    if(diffX>0){
+  if (Math.abs(diffX) > Math.abs(diffY)) {
+    if (diffX > 0) {
       keyRight();
-    }else{
+    } else {
       keyLeft();
     }
-  }else{
-    if(diffY>0){
+  } else {
+    if (diffY > 0) {
       keyDown();
-    }else{
+    } else {
       keyUp();
     }
   }
@@ -431,43 +456,36 @@ function handleSwipe() {
 // userTouchScreen Action
 
 gridDisplay.addEventListener("touchstart", (e) => {
-  e.preventDefault();
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
-}, { passive: false });
-
-gridDisplay.addEventListener("touchmove", (e) => {
-  e.preventDefault();
-}, { passive: false });
+});
 
 gridDisplay.addEventListener("touchend", (e) => {
-  e.preventDefault();
   endX = e.changedTouches[0].clientX;
   endY = e.changedTouches[0].clientY;
   handleSwipe();
-}, { passive: false });
-
-
+});
 
 // reset Game function
 function resetGame() {
-
-  divArray.forEach(tile => {
+  divArray.forEach((tile) => {
     tile.innerText = 0;
   });
 
   score = 0;
   scoreDisplay.innerText = score;
 
-  document.querySelectorAll(".game-win, .game-over")
-    .forEach(el => el.remove());
+  localStorage.removeItem("gameState");
+  localStorage.removeItem("score");
+
+  document
+    .querySelectorAll(".game-win, .game-over")
+    .forEach((el) => el.remove());
 
   bgColor();
   generate();
   generate();
 }
 
-
 resetGameBtn.addEventListener("click", resetGame);
 document.addEventListener("keyup", control);
-
