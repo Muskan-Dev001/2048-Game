@@ -6,7 +6,7 @@ The game supports keyboard controls, swipe gestures for mobile devices, animatio
 ---
 
 ## 🚀 Live Demo
-👉 (Add your GitHub Pages link here)
+👉 https://muskan-dev001.github.io/2048-Game/
 
 ---
 
@@ -51,7 +51,5 @@ The game supports keyboard controls, swipe gestures for mobile devices, animatio
 - Local Storage API
 
 ---
-
-## 📂 Project Structure
 
 
