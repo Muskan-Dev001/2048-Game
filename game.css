@@ -86,7 +86,7 @@ h1 {
   transition: all 0.3s ease;
 }
 .game-win {
-  margin: 20px;
+  margin: 40px;
   height: clamp(25px, 7vh, 50px);
   width: clamp(250px, 70vw, 500px);
   font-weight: 700;
@@ -152,6 +152,7 @@ h1 {
     line-height: normal;
   }
 }
+
 
 
 
